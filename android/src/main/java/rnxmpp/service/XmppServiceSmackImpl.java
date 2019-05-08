@@ -8,6 +8,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
@@ -122,6 +123,26 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
 
             }
         }.execute();
+    }
+
+    @Override
+    public void register(String username, String password, String hostname){
+      AccountManager accountManager = AccountManager.getInstance(connection);
+      try {
+          if (accountManager.supportsAccountCreation()) {
+              accountManager.sensitiveOperationOverInsecureConnection(true);
+              accountManager.createAccount(username, password);
+          } else {
+              logger.log(Level.SEVERE, "accountManager doesn't support account creation");
+          }
+
+      } catch (SmackException.NoResponseException e) {
+          e.printStackTrace();
+      } catch (XMPPException.XMPPErrorException e) {
+          e.printStackTrace();
+      } catch (SmackException.NotConnectedException e) {
+          e.printStackTrace();
+      }
     }
 
     @Override

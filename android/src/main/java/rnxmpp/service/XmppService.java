@@ -33,4 +33,7 @@ public interface XmppService {
 
     @ReactMethod
     void sendStanza(String stanza);
+
+    @ReactMethod
+    void register(String username, String password, String hostname);
 }
