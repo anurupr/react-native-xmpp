@@ -28,6 +28,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.XmlStringBuilder;
 
+import android.os.Build;
 import android.os.AsyncTask;
 import android.util.Log;
 
