@@ -355,12 +355,12 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
 
     @Override
     public void reconnectingIn(int seconds) {
-        Log.i(TAG, "Reconnecting in {0} seconds", seconds);
+        Log.i(TAG, "Reconnecting in {0} seconds" + seconds);
     }
 
     @Override
     public void reconnectionFailed(Exception e) {
-        Log.w(TAG, "Could not reconnect", e);
+        Log.w(TAG, "Could not reconnect" + e.getMessage());
 
     }
 
