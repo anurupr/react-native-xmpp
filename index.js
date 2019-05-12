@@ -12,7 +12,8 @@ var map = {
     'error': 'RNXMPPError',
     'loginError': 'RNXMPPLoginError',
     'login': 'RNXMPPLogin',
-    'roster': 'RNXMPPRoster'
+    'roster': 'RNXMPPRoster',
+    'register': 'RNXMPPRegister'
 }
 
 const LOG = (message) => {
@@ -101,7 +102,7 @@ class XMPP {
             NativeAppEventEmitter.addListener(map.loginError, this.onLoginError.bind(this)),
             NativeAppEventEmitter.addListener(map.login, this.onLogin.bind(this)),
         ];
-        
+
         LOG('All event listeners removed');
     }
 
@@ -146,6 +147,9 @@ class XMPP {
       if (this.isConnected){
         React.NativeModules.RNXMPP.disconnectAfterSending();
       }
+    }
+    register(username, password, hostname){
+      React.NativeModules.RNXMPP.register(username, password, hostname);
     }
 }
 

@@ -33,6 +33,7 @@ public class RNXMPPCommunicationBridge implements XmppServiceListener {
     public static final String RNXMPP_CONNECT =     "RNXMPPConnect";
     public static final String RNXMPP_DISCONNECT =  "RNXMPPDisconnect";
     public static final String RNXMPP_LOGIN =       "RNXMPPLogin";
+    public static final String RNXMPP_REGISTER =       "RNXMPPRegister";
     ReactContext reactContext;
 
     public RNXMPPCommunicationBridge(ReactContext reactContext) {
