@@ -47,7 +47,7 @@ import rnxmpp.ssl.UnsafeSSLContext;
 public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, StanzaListener, ConnectionListener, ChatMessageListener, RosterLoadedListener {
     XmppServiceListener xmppServiceListener;
     Logger logger = Logger.getLogger(XmppServiceSmackImpl.class.getName());
-    public static final String TAG = 'XMPPServiceImpl';
+    public static final String TAG = "XMPPServiceImpl";
     private String HOST = "nextwhatsapp.raveendran.me";
 
     XMPPTCPConnection connection;
