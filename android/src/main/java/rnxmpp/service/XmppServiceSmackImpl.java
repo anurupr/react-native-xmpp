@@ -28,6 +28,8 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.XmlStringBuilder;
 
+import org.jxmpp.stringprep.XmppStringprepException;
+
 import android.os.Build;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -197,8 +199,8 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
 
     @Override
     public void register(String username, String password, String hostname){
-      AccountManager accountManager = AccountManager.getInstance(getConnection());
       try {
+          AccountManager accountManager = AccountManager.getInstance(getConnection());
           if (accountManager.supportsAccountCreation()) {
               accountManager.sensitiveOperationOverInsecureConnection(true);
               accountManager.createAccount(username, password);
@@ -211,6 +213,9 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
       } catch (SmackException.NoResponseException e) {
           e.printStackTrace();
           Log.e(TAG, "SmackException.NoResponseException: " + e.getMessage());
+      } catch (XMPPException e) {
+          e.printStackTrace();
+          Log.e(TAG, "XMPPException: " + e.getMessage());
       } catch (SmackException e) {
           e.printStackTrace();
           Log.e(TAG, "SmackException: " + e.getMessage());
@@ -220,9 +225,6 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
       } catch (InterruptedException e) {
           e.printStackTrace();
           Log.e(TAG, "InterruptedException " + e.getMessage());
-      } catch (XMPPException.XMPPErrorException e) {
-          e.printStackTrace();
-          Log.e(TAG, "XMPPException.XMPPErrorException: " + e.getMessage());
       }
     }
 
