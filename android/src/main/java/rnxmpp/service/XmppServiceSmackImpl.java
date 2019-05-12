@@ -129,6 +129,10 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
         }.execute();
     }
 
+    public boolean isConnected() {
+        return (this.connection != null) && (this.connection.isConnected());
+    }
+
     private XMPPTCPConnectionConfiguration buildConfiguration() throws XmppStringprepException {
       XMPPTCPConnectionConfiguration.Builder builder =
             XMPPTCPConnectionConfiguration.builder();
