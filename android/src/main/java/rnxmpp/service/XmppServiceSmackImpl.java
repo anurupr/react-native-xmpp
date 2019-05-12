@@ -314,7 +314,7 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
         }else if (packet instanceof Presence){
             this.xmppServiceListener.onPresence((Presence) packet);
         }else{
-            Log.w(TAG, "Got a Stanza, of unknown subclass", packet.toXML());
+            Log.w(TAG, "Got a Stanza, of unknown subclass" +  packet.toXML().toString());
         }
     }
 
