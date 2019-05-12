@@ -2,14 +2,14 @@
   "name": "react-native-xmpp",
   "version": "1.0.3",
   "description": "XMPP Library for React Native",
-  "homepage":"https://github.com/aksonov/react-native-xmpp",
+  "homepage":"https://github.com/anurupr/react-native-xmpp",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aksonov/react-native-xmpp.git"
+    "url": "git+https://github.com/anurupr/react-native-xmpp.git"
   },
   "keywords": [
     "xmpp",
@@ -17,10 +17,10 @@
     "xmppframework"
   ],
   "author": {
-    "name": "Pavlo Aksonov"
+    "name": "Anurup Raveendran"
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/aksonov/react-native-xmpp/issues"
+    "url": "https://github.com/anurupr/react-native-xmpp/issues"
   }
 }
