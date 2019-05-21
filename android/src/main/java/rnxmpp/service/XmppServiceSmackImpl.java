@@ -53,15 +53,14 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
     XmppServiceListener xmppServiceListener;
     Logger logger = Logger.getLogger(XmppServiceSmackImpl.class.getName());
     public static final String TAG = "XMPPServiceImpl";
-    private String HOST = "nextwhatsapp.raveendran.me";
 
-    XMPPTCPConnection connection;
+    XMPPTCPConnection connection, connectionAlt;
     Roster roster;
     List<String> trustedHosts = new ArrayList<>();
     String password;
 
     public XmppServiceSmackImpl(XmppServiceListener xmppServiceListener) {
-        this.xmppServiceListener = xmppServiceListener;
+      this.xmppServiceListener = xmppServiceListener;
     }
 
     @Override
@@ -71,51 +70,61 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
         }
     }
 
+    private XMPPTCPConnectionConfiguration.Builder getConfiguration(String hostname, Integer port,String username, String password) {
+      XMPPTCPConnectionConfiguration.Builder confBuilder = XMPPTCPConnectionConfiguration.builder();
+
+      if (hostname != null) {
+          confBuilder.setServiceName(hostname);
+          confBuilder.setHost(hostname);
+      }
+
+      if (port != null)
+          confBuilder.setPort(port);
+
+      if (username != null && password != null)
+          confBuilder.setUsernameAndPassword(username, password);
+
+      confBuilder
+      .setConnectTimeout(3000)
+      //.setDebuggerEnabled(true)
+      .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
+      .setCompressionEnabled(false)
+      .setSendPresence(true);
+
+      if (Build.VERSION.SDK_INT >= 14) {
+          confBuilder.setKeystoreType("AndroidCAStore");
+          // config.setTruststorePassword(null);
+          confBuilder.setKeystorePath(null);
+      } else {
+          confBuilder.setKeystoreType("BKS");
+          String str = System.getProperty("javax.net.ssl.trustStore");
+          if (str == null) {
+              str = System.getProperty("java.home") + File.separator + "etc" + File.separator + "security"
+                      + File.separator + "cacerts.bks";
+          }
+          confBuilder.setKeystorePath(str);
+      }
+
+      return confBuilder;
+    }
+
     @Override
-    public void connect(String jid, String password, String authMethod, String hostname, Integer port) {
-        final String[] jidParts = jid.split("@");
-        String[] serviceNameParts = jidParts[1].split("/");
-        String serviceName = serviceNameParts[0];
-
-        XMPPTCPConnectionConfiguration.Builder confBuilder = XMPPTCPConnectionConfiguration.builder()
-                .setServiceName(serviceName)
-                .setUsernameAndPassword(jidParts[0], password)
-                .setConnectTimeout(3000)
-                //.setDebuggerEnabled(true)
-                .setSecurityMode(ConnectionConfiguration.SecurityMode.required);
-
-        if (serviceNameParts.length>1){
-            confBuilder.setResource(serviceNameParts[1]);
-        } else {
-            confBuilder.setResource(Long.toHexString(Double.doubleToLongBits(Math.random())));
-        }
-        if (hostname != null){
-            confBuilder.setHost(hostname);
-        }
-        if (port != null){
-            confBuilder.setPort(port);
-        }
-        if (trustedHosts.contains(hostname) || (hostname == null && trustedHosts.contains(serviceName))){
-            confBuilder.setCustomSSLContext(UnsafeSSLContext.INSTANCE.getContext());
-        }
+    public void connect(String username, String password, String authMethod, String hostname, Integer port) {
+        XMPPTCPConnectionConfiguration.Builder confBuilder = getConfiguration(hostname, port, username, password);
         XMPPTCPConnectionConfiguration connectionConfiguration = confBuilder.build();
         connection = new XMPPTCPConnection(connectionConfiguration);
-
+        final String uname = username;
         connection.addAsyncStanzaListener(this, new OrFilter(new StanzaTypeFilter(IQ.class), new StanzaTypeFilter(Presence.class)));
         connection.addConnectionListener(this);
 
-        ChatManager.getInstanceFor(connection).addChatListener(this);
-        roster = Roster.getInstanceFor(connection);
-        roster.addRosterLoadedListener(this);
-
         new AsyncTask<Void, Void, Void>() {
-
             @Override
             protected Void doInBackground(Void... params) {
                 try {
                     connection.connect().login();
                 } catch (XMPPException | SmackException | IOException e) {
-                    Log.e(TAG, "Could not login for user " + jidParts[0], e);
+                      if (uname != null)
+                        Log.e(TAG, "Could not login for user " + uname, e);
                     if (e instanceof SASLErrorException){
                         XmppServiceSmackImpl.this.xmppServiceListener.onLoginError(((SASLErrorException) e).getSASLFailure().toString());
                     }else{
@@ -137,70 +146,10 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
         return (this.connection != null) && (this.connection.isConnected());
     }
 
-    private XMPPTCPConnectionConfiguration buildConfiguration() throws XmppStringprepException {
-      XMPPTCPConnectionConfiguration.Builder builder =
-            XMPPTCPConnectionConfiguration.builder();
-
-
-      builder.setHost(HOST);
-      //builder.setPort(PORT);
-      builder.setCompressionEnabled(false);
-      builder.setDebuggerEnabled(true);
-      builder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
-      builder.setSendPresence(true);
-
-      if (Build.VERSION.SDK_INT >= 14) {
-          builder.setKeystoreType("AndroidCAStore");
-          // config.setTruststorePassword(null);
-          builder.setKeystorePath(null);
-      } else {
-          builder.setKeystoreType("BKS");
-          String str = System.getProperty("javax.net.ssl.trustStore");
-          if (str == null) {
-              str = System.getProperty("java.home") + File.separator + "etc" + File.separator + "security"
-                      + File.separator + "cacerts.bks";
-          }
-          builder.setKeystorePath(str);
-      }
-      //DomainBareJid serviceName = JidCreate.domainBareFrom(HOST);
-      builder.setServiceName(HOST);
-
-
-      return builder.build();
-  }
-
-    private XMPPTCPConnection getConnection() throws XMPPException, SmackException, IOException, InterruptedException {
-        Log.d(TAG, "Getting XMPP Connect");
-        if (isConnected()) {
-            Log.d(TAG, "Returning already existing connection");
-            return this.connection;
-        }
-
-        long l = System.currentTimeMillis();
-        try {
-            if(this.connection != null){
-                Log.d(TAG, "Connection found, trying to connect");
-                this.connection.connect();
-            }else{
-                Log.d(TAG, "No Connection found, trying to create a new connection");
-                XMPPTCPConnectionConfiguration config = buildConfiguration();
-                SmackConfiguration.DEBUG = true;
-                this.connection = new XMPPTCPConnection(config);
-                this.connection.connect();
-            }
-        } catch (Exception e) {
-            Log.e(TAG,"some issue with getting connection :" + e.getMessage());
-        }
-
-        Log.d(TAG, "Connection Properties: " + connection.getHost() + " " + connection.getServiceName());
-        Log.d(TAG, "Time taken in first time connect: " + (System.currentTimeMillis() - l));
-        return this.connection;
-    }
-
     @Override
     public void register(String username, String password, String hostname){
       try {
-          AccountManager accountManager = AccountManager.getInstance(getConnection());
+          AccountManager accountManager = AccountManager.getInstance(connection);
           if (accountManager.supportsAccountCreation()) {
               accountManager.sensitiveOperationOverInsecureConnection(true);
               accountManager.createAccount(username, password);
@@ -216,15 +165,6 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
       } catch (XMPPException e) {
           e.printStackTrace();
           Log.e(TAG, "XMPPException: " + e.getMessage());
-      } catch (SmackException e) {
-          e.printStackTrace();
-          Log.e(TAG, "SmackException: " + e.getMessage());
-      } catch (IOException e) {
-          e.printStackTrace();
-          Log.e(TAG, "IOException: " + e.getMessage());
-      } catch (InterruptedException e) {
-          e.printStackTrace();
-          Log.e(TAG, "InterruptedException " + e.getMessage());
       }
     }
 
