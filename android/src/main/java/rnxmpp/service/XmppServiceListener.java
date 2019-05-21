@@ -18,7 +18,7 @@ public interface XmppServiceListener {
     void onRosterReceived(Roster roster);
     void onIQ(IQ iq);
     void onPresence(Presence presence);
-    void onConnnect(String username, String password);
+    void onConnnect();
     void onDisconnect(Exception e);
     void onLogin(String username, String password);
 

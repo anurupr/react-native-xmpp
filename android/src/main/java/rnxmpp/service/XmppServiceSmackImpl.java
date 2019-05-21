@@ -269,7 +269,7 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
 
     @Override
     public void connected(XMPPConnection connection) {
-        this.xmppServiceListener.onConnnect(connection.getUser(), password);
+        this.xmppServiceListener.onConnnect();
     }
 
     @Override

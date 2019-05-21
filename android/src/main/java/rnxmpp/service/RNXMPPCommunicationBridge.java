@@ -100,10 +100,10 @@ public class RNXMPPCommunicationBridge implements XmppServiceListener {
     }
 
     @Override
-    public void onConnnect(String username, String password) {
+    public void onConnnect() {
         WritableMap params = Arguments.createMap();
-        params.putString("username", username);
-        params.putString("password", password);
+        // params.putString("username", username);
+        // params.putString("password", password);
         sendEvent(reactContext, RNXMPP_CONNECT, params);
     }
 
