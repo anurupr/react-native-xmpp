@@ -13,12 +13,14 @@ var map = {
     'loginError': 'RNXMPPLoginError',
     'login': 'RNXMPPLogin',
     'roster': 'RNXMPPRoster',
-    'register': 'RNXMPPRegister'
+    'register': 'RNXMPPRegister',
+    'newmessage': 'RNXMPPNewSentMessage'
 }
 
 const LOG = (message) => {
   if (__DEV__) {
-    console.log('react-native-xmpp: ' + message);
+    console.trace();
+    console.log('react-native-xmpps: ' + message);
   }
 }
 
@@ -36,6 +38,7 @@ class XMPP {
             NativeAppEventEmitter.addListener(map.error, this.onError.bind(this)),
             NativeAppEventEmitter.addListener(map.loginError, this.onLoginError.bind(this)),
             NativeAppEventEmitter.addListener(map.login, this.onLogin.bind(this)),
+          //  NativeAppEventEmitter.addListener(map.message, this.onMessage.bind(this)),
         ];
     }
 
@@ -110,16 +113,16 @@ class XMPP {
         React.NativeModules.RNXMPP.trustHosts(hosts);
     }
 
-    connect(username, password, auth = RNXMPP.SCRAMSHA1, hostname = null, port = 5222){
+    connect(username, password, auth = RNXMPP.SCRAMSHA1, hostname = null, port = 5222, ecb = null, scb = null){
         if (!hostname){
             hostname = (username+'@/').split('@')[1].split('/')[0];
         }
-        React.NativeModules.RNXMPP.connect(username, password, auth, hostname, port);
+        React.NativeModules.RNXMPP.connect(username, password, auth, hostname, port, ecb, scb);
     }
 
-    message(text, user, thread = null){
+    message(text, user, thread = null, itemJSON = null, ecb = null, scb = null){
         LOG(`Message: "${text}" being sent to user: ${user}`);
-        React.NativeModules.RNXMPP.message(text, user, thread);
+        React.NativeModules.RNXMPP.message(text, user, thread, itemJSON, ecb, scb);
     }
 
     sendStanza(stanza){

@@ -4,6 +4,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.Callback;
 
 import java.util.logging.Logger;
 
@@ -38,14 +39,19 @@ public class RNXMPPModule extends ReactContextBaseJavaModule implements rnxmpp.s
 
     @Override
     @ReactMethod
-    public void connect(String jid, String password, String authMethod, String hostname, Integer port){
+    /*public void connect(String jid, String password, String authMethod, String hostname, Integer port){
         this.xmppService.connect(jid, password, authMethod, hostname, port);
+
+    } */
+    public void connect(String jid, String password, String authMethod, String hostname, Integer port, Callback errorCallback, Callback successCallback){
+        this.xmppService.connect(jid, password, authMethod, hostname, port, errorCallback, successCallback);
+
     }
 
     @Override
     @ReactMethod
-    public void message(String text, String to, String thread){
-        this.xmppService.message(text, to, thread);
+    public void message(String text, String to, String thread, String itemJSON, Callback errorCallback, Callback successCallback){
+        this.xmppService.message(text, to, thread, lkey, errorCallback, successCallback);
     }
 
     @Override

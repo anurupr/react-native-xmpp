@@ -15,6 +15,8 @@ import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 
+import java.util.List;
+
 import rnxmpp.utils.Parser;
 
 /**
@@ -34,6 +36,7 @@ public class RNXMPPCommunicationBridge implements XmppServiceListener {
     public static final String RNXMPP_DISCONNECT =  "RNXMPPDisconnect";
     public static final String RNXMPP_LOGIN =       "RNXMPPLogin";
     public static final String RNXMPP_REGISTER =       "RNXMPPRegister";
+    public static final String RNXMPP_NEW_SENT_MESSAGE =       "RNXMPPNewSentMessage";
     ReactContext reactContext;
 
     public RNXMPPCommunicationBridge(ReactContext reactContext) {
@@ -61,9 +64,28 @@ public class RNXMPPCommunicationBridge implements XmppServiceListener {
         params.putString("thread", message.getThread());
         params.putString("subject", message.getSubject());
         params.putString("body", message.getBody());
-        params.putString("from", message.getFrom());
-        params.putString("src", message.toXML().toString());
+        params.putString("from", message.getFrom().toString());
+        //params.putString("src", message.toXML().toString());
+        params.putString("id", message.getStanzaId().toString());
         sendEvent(reactContext, RNXMPP_MESSAGE, params);
+    }
+
+    @Override
+    public void onNewSentMessage(List<Message> messages) {
+        WritableArray response = Arguments.createArray();
+        //Log.i(TAG, "In new sent messages " + Integer.toString(messages.size()));
+        for (int i = 0; i < messages.size(); i++) {
+            Message message = messages.get(i);
+            WritableMap params = Arguments.createMap();
+            params.putString("thread", message.getThread());
+            params.putString("subject", message.getSubject());
+            params.putString("body", message.getBody());
+            params.putString("from", message.getFrom().toString());
+            params.putString("id", message.getStanzaId().toString());
+            //params.putString("src", message.toXML().toString());
+            response.pushMap(params);
+        }
+        sendEvent(reactContext, RNXMPP_NEW_SENT_MESSAGE, response);
     }
 
     @Override
@@ -93,14 +115,14 @@ public class RNXMPPCommunicationBridge implements XmppServiceListener {
     public void onPresence(Presence presence) {
         WritableMap presenceMap = Arguments.createMap();
         presenceMap.putString("type", presence.getType().toString());
-        presenceMap.putString("from", presence.getFrom());
+        presenceMap.putString("from", presence.getFrom().toString());
         presenceMap.putString("status", presence.getStatus());
         presenceMap.putString("mode", presence.getMode().toString());
         sendEvent(reactContext, RNXMPP_PRESENCE, presenceMap);
     }
 
     @Override
-    public void onConnnect() {
+    public void onConnect() {
         WritableMap params = Arguments.createMap();
         // params.putString("username", username);
         // params.putString("password", password);
