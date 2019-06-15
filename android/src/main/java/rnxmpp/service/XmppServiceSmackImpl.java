@@ -215,7 +215,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
           AccountManager accountManager = AccountManager.getInstance(connection);
           if (accountManager.supportsAccountCreation()) {
               accountManager.sensitiveOperationOverInsecureConnection(true);
-              accountManager.createAccount(JidCreate.from(username), password);
+              accountManager.createAccount(Localpart.fromUnescaped(username), password);
           } else {
               Log.e(TAG, "accountManager doesn't support account creation");
           }
