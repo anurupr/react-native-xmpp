@@ -328,38 +328,38 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
         }
     }
 
-    // public class StanzaPacket extends org.jivesoftware.smack.packet.Stanza {
-    //      private String xmlString;
-    //
-    //      public StanzaPacket(String xmlString) {
-    //          super();
-    //          this.xmlString = xmlString;
-    //      }
-    //
-    //      @Override
-    //      public CharSequence toXML(String enclosingNamespace) {
-    //        XmlStringBuilder xml = new XmlStringBuilder();
-    //        xml.append(this.xmlString);
-    //        return xml.toString();
-    //      }
-    //
-    //      @Override
-    //      public String toString() {
-    //          Log.i(TAG, "toString");
-    //          return "ToString()";
-    //      }
-    // }
+    public class StanzaPacket extends org.jivesoftware.smack.packet.Stanza {
+         private String xmlString;
 
-    // @Override
-    // public void sendStanza(String stanza) {
-    //     StanzaPacket packet = new StanzaPacket(stanza);
-    //     try {
-    //         Log.i(TAG, "send stanza Stanza ID" + packet.getStanzaId());
-    //         connection.sendPacket(packet);
-    //     } catch (SmackException e) {
-    //         Log.w(TAG, "Could not send stanza", e);
-    //     }
-    // }
+         public StanzaPacket(String xmlString) {
+             super();
+             this.xmlString = xmlString;
+         }
+
+         @Override
+         public CharSequence toXML(String enclosingNamespace) {
+           XmlStringBuilder xml = new XmlStringBuilder();
+           xml.append(this.xmlString);
+           return xml.toString();
+         }
+
+         @Override
+         public String toString() {
+             Log.i(TAG, "toString");
+             return "ToString()";
+         }
+    }
+
+    @Override
+    public void sendStanza(String stanza) {
+        StanzaPacket packet = new StanzaPacket(stanza);
+        try {
+            Log.i(TAG, "send stanza Stanza ID" + packet.getStanzaId());
+            connection.sendStanza(packet);
+        } catch (SmackException e) {
+            Log.w(TAG, "Could not send stanza", e);
+        }
+    }
 
     @Override
     public void connected(XMPPConnection connection) {
