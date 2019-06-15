@@ -2,6 +2,7 @@ package rnxmpp.service;
 
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.Callback;
 
 /**
  * Created by Kristian Frølund on 7/19/16.

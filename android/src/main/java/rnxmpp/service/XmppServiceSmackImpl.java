@@ -16,7 +16,6 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.iqregister.AccountManager;
@@ -122,7 +121,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
 
       confBuilder
       .setConnectTimeout(3000)
-      .setDebuggerEnabled(true)
+      //.setDebuggerEnabled(true)
       .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
       //.setCompressionEnabled(true)
       .setSendPresence(true);
@@ -216,7 +215,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
           AccountManager accountManager = AccountManager.getInstance(connection);
           if (accountManager.supportsAccountCreation()) {
               accountManager.sensitiveOperationOverInsecureConnection(true);
-              accountManager.createAccount(username, password);
+              accountManager.createAccount(JidCreate.from(username), password);
           } else {
               Log.e(TAG, "accountManager doesn't support account creation");
           }
@@ -275,7 +274,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
           chat.send(newMessage);
           if (successCallback != null) {
             messageModel.setStanzaID(newMessage.getStanzaId().toString());
-            successCallback.invoke(gson.toJSON(messageModel));
+            successCallback.invoke(gson.toJson(messageModel));
           }
       } catch (SmackException | InterruptedException e) {
           Log.w(TAG, "Could not send message", e);
@@ -329,38 +328,38 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
         }
     }
 
-    public class StanzaPacket extends org.jivesoftware.smack.packet.Stanza {
-         private String xmlString;
+    // public class StanzaPacket extends org.jivesoftware.smack.packet.Stanza {
+    //      private String xmlString;
+    //
+    //      public StanzaPacket(String xmlString) {
+    //          super();
+    //          this.xmlString = xmlString;
+    //      }
+    //
+    //      @Override
+    //      public CharSequence toXML(String enclosingNamespace) {
+    //        XmlStringBuilder xml = new XmlStringBuilder();
+    //        xml.append(this.xmlString);
+    //        return xml.toString();
+    //      }
+    //
+    //      @Override
+    //      public String toString() {
+    //          Log.i(TAG, "toString");
+    //          return "ToString()";
+    //      }
+    // }
 
-         public StanzaPacket(String xmlString) {
-             super();
-             this.xmlString = xmlString;
-         }
-
-         @Override
-         public CharSequence toXML(String enclosingNamespace) {
-           XmlStringBuilder xml = new XmlStringBuilder();
-           xml.append(this.xmlString);
-           return xml.toString();
-         }
-
-         @Override
-         public String toString() {
-             Log.i(TAG, "toString");
-             return "ToString()";
-         }
-    }
-
-    @Override
-    public void sendStanza(String stanza) {
-        StanzaPacket packet = new StanzaPacket(stanza);
-        try {
-            Log.i(TAG, "send stanza Stanza ID" + packet.getStanzaId());
-            connection.sendPacket(packet);
-        } catch (SmackException e) {
-            Log.w(TAG, "Could not send stanza", e);
-        }
-    }
+    // @Override
+    // public void sendStanza(String stanza) {
+    //     StanzaPacket packet = new StanzaPacket(stanza);
+    //     try {
+    //         Log.i(TAG, "send stanza Stanza ID" + packet.getStanzaId());
+    //         connection.sendPacket(packet);
+    //     } catch (SmackException e) {
+    //         Log.w(TAG, "Could not send stanza", e);
+    //     }
+    // }
 
     @Override
     public void connected(XMPPConnection connection) {
