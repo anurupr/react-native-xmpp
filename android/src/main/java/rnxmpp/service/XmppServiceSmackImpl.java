@@ -323,7 +323,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
     public void fetchRoster() {
         try {
             roster.reload();
-        } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException e) {
+        } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
             Log.w(TAG, "Could not fetch roster", e);
         }
     }
@@ -356,7 +356,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
         try {
             Log.i(TAG, "send stanza Stanza ID" + packet.getStanzaId());
             connection.sendStanza(packet);
-        } catch (SmackException e) {
+        } catch (SmackException | InterruptedException e) {
             Log.w(TAG, "Could not send stanza", e);
         }
     }
