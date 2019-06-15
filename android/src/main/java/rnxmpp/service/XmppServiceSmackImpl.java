@@ -67,8 +67,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.google.gson.Gson;
-import com.google.gson.JSONException;
-import com.google.gson.JSONObject;
 
 import rnxmpp.ssl.UnsafeSSLContext;
 
@@ -250,6 +248,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
       String chatIdentifier = (thread == null ? to : thread);
       EntityJid toJID = null;
       MessageModel messageModel = null;
+      Gson gson = new Gson();
       try {
           toJID = (EntityJid) JidCreate.from(to);
       } catch (XmppStringprepException e) {
@@ -258,7 +257,6 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
       }
 
       try {
-          Gson gson = new Gson();
           messageModel = gson.fromJson(itemJSON, MessageModel.class);
       } catch (Exception e) {
           e.printStackTrace();
@@ -276,8 +274,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
           Log.i(TAG, "New New Outgoing Message , ID " + newMessage.getStanzaId().toString() + ", Thread ID " + newMessage.getThread());
           chat.send(newMessage);
           if (successCallback != null) {
-            JSONObject obj = messageModel.getAsJsonObject();
-            obj.put("stanza_id", newMessage.getStanzaId().toString());
+            messageModel.setStanzaID(newMessage.getStanzaId().toString());
             successCallback.invoke(gson.toJSON(messageModel));
           }
       } catch (SmackException | InterruptedException e) {
