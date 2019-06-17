@@ -203,8 +203,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
             protected void onPostExecute(Void dummy) {
 
             }
-        }.execute();
-      }
+        }.execute();      
     } catch (InterruptedException e) {
       XmppServiceSmackImpl.this.xmppServiceListener.onError(e);
     }
