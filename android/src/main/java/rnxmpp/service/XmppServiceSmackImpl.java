@@ -163,7 +163,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
       }
 
       if (username == null) {
-        username = "admin@localhost";
+        username = "admin";
       }
 
       if (password == null) {
