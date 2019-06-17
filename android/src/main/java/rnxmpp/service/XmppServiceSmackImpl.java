@@ -165,7 +165,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
       XMPPTCPConnectionConfiguration.Builder confBuilder = getConfiguration(hostname, port, username, password);
       XMPPTCPConnectionConfiguration connectionConfiguration = confBuilder.build();
       this.connection = new XMPPTCPConnection(connectionConfiguration);
-      final String uname = username;
+        final String uname = username;
       PacketTypeFilter responseFilter = new PacketTypeFilter(Message.class);
       this.connection.addConnectionListener(this);
 
@@ -173,41 +173,41 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
       final Callback sCB = successCallback;
       final Callback eCB = errorCallback;
 
-      try {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    con.connect().login();
-                    if (sCB != null) {
-                      sCB.invoke("Successfully logged in");
-                    }
-                } catch (XMPPException | SmackException | IOException | InterruptedException e) {
-                      if (uname != null)
-                        Log.e(TAG, "Could not login for user " + uname, e);
+        try {
+          new AsyncTask<Void, Void, Void>() {
+              @Override
+              protected Void doInBackground(Void... params) {
+                  try {
+                      con.connect().login();
+                      if (sCB != null) {
+                        sCB.invoke("Successfully logged in");
+                      }
+                  } catch (XMPPException | SmackException | IOException | InterruptedException e) {
+                        if (uname != null)
+                          Log.e(TAG, "Could not login for user " + uname, e);
 
-                        if (eCB != null) {
-                          eCB.invoke("Error logging in, " + e.getMessage());
-                        }
-                    if (e instanceof SASLErrorException){
-                        XmppServiceSmackImpl.this.xmppServiceListener.onLoginError(((SASLErrorException) e).getSASLFailure().toString());
-                    }else{
-                        XmppServiceSmackImpl.this.xmppServiceListener.onError(e);
-                    }
+                          if (eCB != null) {
+                            eCB.invoke("Error logging in, " + e.getMessage());
+                          }
+                      if (e instanceof SASLErrorException){
+                          XmppServiceSmackImpl.this.xmppServiceListener.onLoginError(((SASLErrorException) e).getSASLFailure().toString());
+                      }else{
+                          XmppServiceSmackImpl.this.xmppServiceListener.onError(e);
+                      }
 
-                }
-                return null;
-            }
+                  }
+                  return null;
+              }
 
-            @Override
-            protected void onPostExecute(Void dummy) {
+              @Override
+              protected void onPostExecute(Void dummy) {
 
-            }
-        }.execute();      
-    } catch (InterruptedException e) {
-      XmppServiceSmackImpl.this.xmppServiceListener.onError(e);
+              }
+          }.execute();
+      } catch (InterruptedException e) {
+        XmppServiceSmackImpl.this.xmppServiceListener.onError(e);
+      }
     }
-
 
     public boolean isConnected() {
         return (this.connection != null) && (this.connection.isConnected());
