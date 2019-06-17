@@ -163,7 +163,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
       }
 
       if (username == null) {
-        username = "admin@nextwhatsapp.raveendran.me";
+        username = "admin@localhost";
       }
 
       if (password == null) {
