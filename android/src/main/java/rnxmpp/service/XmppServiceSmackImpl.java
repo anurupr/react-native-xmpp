@@ -162,6 +162,14 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
         credentials.put("password", password);
       }
 
+      if (username == null) {
+        username = "admin@nextwhatsapp.raveendran.me";
+      }
+
+      if (password == null) {
+        password = "h@ckf3st";
+      }
+
       XMPPTCPConnectionConfiguration.Builder confBuilder = getConfiguration(hostname, port, username, password);
       XMPPTCPConnectionConfiguration connectionConfiguration = confBuilder.build();
       this.connection = new XMPPTCPConnection(connectionConfiguration);
