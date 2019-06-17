@@ -182,7 +182,7 @@ public class XmppServiceSmackImpl implements XmppService, ConnectionListener,Out
                       if (sCB != null) {
                         sCB.invoke("Successfully logged in");
                       }
-                  } catch (XMPPException | SmackException | IOException | InterruptedException e) {
+                  } catch (XMPPException | SmackException | IOException | InterruptedException | IllegalArgumentException e) {
                         if (uname != null)
                           Log.e(TAG, "Could not login for user " + uname, e);
 
