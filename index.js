@@ -121,7 +121,7 @@ class XMPP {
     }
 
     message(text, user, thread = null, itemJSON = null, ecb = null, scb = null){
-        LOG(`Message: "${text}" being sent to user: ${user}`);
+        LOG(`Message: "${text}" being sent to user: ${user}`);        
         React.NativeModules.RNXMPP.message(text, user, thread, itemJSON, ecb, scb);
     }
 
